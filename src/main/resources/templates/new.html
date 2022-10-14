@@ -58,7 +58,7 @@
                         All users
                     </div>
                     <form th:method="post" th:action="@{/admin/new}" th:object="${user}"
-                          class="offset-md-4 col-md-4 mt-4 mb-4">
+                          class="offset-md-4 col-md-4 mt-4 mb-4" th:align="center">
                         <div class="form-group">
                             <label for="firstname"><b>First name</b></label>
                             <input th:name="firstName" th:type="text" class="form-control" id="firstname"
