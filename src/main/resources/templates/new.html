@@ -1,25 +1,112 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
-    <title>Форма регистрации</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>New user</title>
+    <style>
+        .container-fluid {
+            padding-right: 0;
+            padding-left: 0;
+            margin-right: auto;
+            margin-left: auto
+        }
+    </style>
 </head>
 <body>
-<form th:method="POST" th:action="@{/admin/new}" th:object="${user}">
-    <label >Введите имя пользователя (username)</label>
-    <input type="text" th:field="*{username}" />
-    <br>
-    <label for="password">Введите пароль</label>
-    <input type="text" th:field="*{password}" id="password"/>
-    <br>
-    <label>Select role:</label>
-    <input type="checkbox" th:field="*{roleSet}" th:value="ROLE_ADMIN" />Admin<br/>
-    <input type="checkbox" th:field="*{roleSet}" th:value="ROLE_USER" />User<br/>
-    <input type="submit" value = "Зарегистрироваться"/>
-</form>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark text-light">
+    <div class="container-fluid">
+        <div>
+            <span class="font-weight-bold" th:text="${user.getUsername()}"></span>
+            <span>with roles:</span>
+            <span sec:authorize="hasRole('ROLE_ADMIN')">ADMIN</span>
+            <span sec:authorize="hasRole('ROLE_USER')">USER</span>
+        </div>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn btn-dark text-secondary">Logout</button>
+        </form>
+    </div>
+</nav>
 
-<form action="/logout">
-    <button>Выйти</button>
-</form>
+<div class="container-fluid row">
+    <div class="p-0 col-2">
+        <div class="nav flex-column nav-pills pt-4" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+            <a class="nav-link active" href="/admin" sec:authorize="hasRole('ROLE_ADMIN')" role="tab"
+               aria-controls="v-pills-home" aria-selected="true">Admin</a>
+            <a class="nav-link" href="/user" sec:authorize="(hasAnyRole('ROLE_ADMIN', 'ROLE_USER'))"
+               role="tab"
+               aria-controls="v-pills-profile" aria-selected="false">User</a>
+        </div>
+    </div>
+    <div class="col-10 p-1">
+        <div class="container-fluid p-4 bg-light">
+            <h2>Admin panel</h2>
+            <nav>
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    <a class="nav-item nav-link" href="/admin" role="tab" aria-controls="nav-home"
+                       aria-selected="false">Users table</a>
+                    <a class="nav-item nav-link active" href="/admin/new" role="tab" aria-controls="nav-profile"
+                       aria-selected="true">New user</a>
+                </div>
+            </nav>
+            <div class="container-fluid">
+                <div class="card">
+                    <div class="card-header font-weight-bold">
+                        All users
+                    </div>
+                    <form th:method="post" th:action="@{/admin/new}" th:object="${user}"
+                          class="offset-md-4 col-md-4 mt-4 mb-4">
+                        <div class="form-group">
+                            <label for="firstname"><b>First name</b></label>
+                            <input th:name="firstName" th:type="text" class="form-control" id="firstname"
+                                   placeholder="First name">
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname"><b>Last name</b></label>
+                            <input th:name="lastName" th:type="text" class="form-control" id="lastname"
+                                   placeholder="Last name">
+                        </div>
+                        <div class="form-group">
+                            <label for="age"><b>Age</b></label>
+                            <input th:name="age" th:type="number" class="form-control" id="age" placeholder="Age">
+                        </div>
+                        <div class="form-group">
+                            <label for="email"><b>Email address</b></label>
+                            <input th:name="email" th:type="email" class="form-control" id="email"
+                                   placeholder="Email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password"><b>Password</b></label>
+                            <input th:name="password" th:field="*{password}" th:type="password" class="form-control"
+                                   id="password" placeholder="Password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="roles"><b>Role</b></label>
+                            <select multiple class="form-control" id="roles" th:field="*{roleSet}" size="2">
+                                <option th:value="ROLE_ADMIN">ADMIN</option>
+                                <option th:value="ROLE_USER">USER</option>
+                            </select>
+                        </div>
+                        <input type="submit" value="Add new user" class="btn btn-lg btn-success col-7"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</body>
 </body>
 </html>

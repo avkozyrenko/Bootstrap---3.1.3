@@ -11,11 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.dao.UserDao;
 import ru.kata.spring.boot_security.demo.model.User;
 
-import javax.annotation.PostConstruct;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 
 @Service
 public class UserServiceImp implements UserService, UserDetailsService {
@@ -24,7 +21,6 @@ public class UserServiceImp implements UserService, UserDetailsService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private Map<String, User> roles = new HashMap<>();
 
     @Autowired
     public UserServiceImp(@Lazy UserDao userDao, @Lazy PasswordEncoder passwordEncoder) {
@@ -55,7 +51,9 @@ public class UserServiceImp implements UserService, UserDetailsService {
     @Override
     @Transactional
     public void updateUser(int id, User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (!user.getPassword().equals(userDao.getUser(user.getId()).getPassword())) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
         userDao.updateUser(id, user);
     }
 

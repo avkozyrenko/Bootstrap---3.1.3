@@ -4,38 +4,42 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
-import java.util.Arrays;
+import java.security.Principal;
+
 
 @Controller
 public class AdminController {
 
     private final UserService userservice;
+    private final RoleService roleService;
 
     @Autowired
-    public AdminController(UserService userservice) {
+    public AdminController(UserService userservice, RoleService roleService) {
         this.userservice = userservice;
+        this.roleService = roleService;
     }
 
-    @GetMapping("/admin/{id}")
-    public String getUser(@PathVariable("id") int id, Model model) {
-        model.addAttribute("user", userservice.getUser(id));
-        return "user";
-    }
 
     @GetMapping("/admin")
-    public String getAllUsers(Model model) {
+    public String getAllUsers(Model model, Principal principal) {
         model.addAttribute("users", userservice.getAllUsers());
+        model.addAttribute("user", userservice.loadUserByUsername(principal.getName()));
+        model.addAttribute("roles", roleService.getAllRoles());
         return "admin";
     }
 
     @GetMapping("/admin/new")
-    public String getRegistrationForm(Model model) {
+    public String getRegistrationForm(Model model, Principal principal) {
 
         User user = new User();
         model.addAttribute("user", user);
+
         return "new";
     }
 
@@ -45,15 +49,9 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    @GetMapping("/admin/{id}/edit")
-    public String getUserEditForm(@PathVariable("id") int id, Model model) {
-        model.addAttribute("edit_user", userservice.getUser(id));
-        return "edit";
-    }
 
-    @PatchMapping("/admin/{id}")
-    public String updateUser(@ModelAttribute("edit_user") User user, @PathVariable("id") int id) {
-
+    @PutMapping("/admin/{id}/edit")
+    public String updateUser(@ModelAttribute("user") User user, @PathVariable("id") int id) {
         userservice.updateUser(id, user);
         return "redirect:/admin";
     }

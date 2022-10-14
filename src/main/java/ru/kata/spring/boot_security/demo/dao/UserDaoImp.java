@@ -3,11 +3,10 @@ package ru.kata.spring.boot_security.demo.dao;
 import org.springframework.stereotype.Repository;
 import ru.kata.spring.boot_security.demo.model.User;
 
-import javax.annotation.PostConstruct;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import java.util.Arrays;
 import java.util.List;
 
 @Repository
@@ -33,10 +32,10 @@ public class UserDaoImp implements UserDao {
     }
 
     @Override
-    public User findByUsername(String username) {
-        TypedQuery<User> q = (em.createQuery("select u from User u join fetch u.roleSet where u.username =:username"
+    public User findByUsername(String email) {
+        TypedQuery<User> q = (em.createQuery("select u from User u join fetch u.roleSet where u.email =:email"
                 , User.class));
-        q.setParameter("username", username);
+        q.setParameter("email", email);
         return q.getResultList().stream().findFirst().orElse(null);
 
     }

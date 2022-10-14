@@ -4,7 +4,9 @@ import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "roles")
@@ -19,11 +21,18 @@ public class Role implements GrantedAuthority {
     @NotEmpty(message = "Назначьте права доступа новому пользователю")
     private String role;
 
+
     public Role() {
     }
 
     public Role(String role) {
         this.role = role;
+    }
+
+    public Role(int role_id, String role) {
+        this.role_id = role_id;
+        this.role = role;
+
     }
 
     public int getRole_id() {
@@ -41,6 +50,11 @@ public class Role implements GrantedAuthority {
     public void setRole(String role) {
         this.role = role;
     }
+
+    public String getUserRole() {
+        return role;
+    }
+
 
     @Override
     public String getAuthority() {
@@ -62,7 +76,7 @@ public class Role implements GrantedAuthority {
 
     @Override
     public String toString() {
-        return "Role: " + role;
+        return role.substring(5);
     }
 
 }
